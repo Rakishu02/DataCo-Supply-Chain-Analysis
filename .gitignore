@@ -1,0 +1,28 @@
+# Local configurations & credentials
+config.py
+.env
+
+# System logs & IDE metadata
+.gemini/
+.agents/
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+
+# Project Management & PRD files (Private context)
+PRD/
+*Data_Context.md
+ai_context.md
+*Profile Report.html
+
+# Large Datasets & Machine Learning models (Do not commit to Git)
+Raw Dataset/
+Dataset/
+cleaned_dataset/
+Gold Dataset/
+Experiments/
+
+# Tableau local workbook files (Packaged .twbx contains the data, keep only that)
+*.twb
+Dashboard_Backup.twb
+Preferences.tps
