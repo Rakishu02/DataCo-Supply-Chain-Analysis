@@ -24,7 +24,7 @@ I built an automated data pipeline using **AWS S3** (cloud storage) and **Databr
 
 *   📊 **[View Interactive Dashboard on Tableau Public](https://public.tableau.com/views/Dashboard_17831794486840/Dashboard1?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)**
 *   🎨 **[View Presentation Slide Deck on Canva](https://canva.link/0nyg28pls1btki7)**
-*   💾 **[DataCo Supply Chain Dataset (Kaggle)](https://www.kaggle.com/datasets/shashwatwork/dataco-smart-supply-chain-dataset)**
+*   💾 **[DataCo Supply Chain Dataset (Kaggle)](https://www.kaggle.com/datasets/shashwatwork/dataco-smart-supply-chain-for-big-data-analysis)**
 *   🔍 **Interactive Data Profiling Reports (Databricks Profilers):**
     *   📥 **[Bronze Layer Data Report (HTML)](./Bronze%20Layer%20Data%20Report.html)** — Raw data schemas, initial column shapes, and null metrics.
     *   🧹 **[Silver Layer Data Report (HTML)](./Silver%20Layer%20Data%20Report.html)** — Cleaned text distributions, casing checks, and padded records.
