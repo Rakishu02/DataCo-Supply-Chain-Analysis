@@ -46,19 +46,34 @@ I built an automated data pipeline using **AWS S3** (cloud storage) and **Databr
 The data flows logically from cloud storage to BI visualization, fully automated using **Databricks Jobs**:
 
 ```mermaid
-graph LR
-    S3[(AWS S3 Inbound)] --> Bronze[Bronze Delta Lake: Raw Ingest]
-    Bronze --> Silver[Silver Delta Lake: Clean & Feature Eng]
-    Silver --> ML[LightGBM Model: Delay Risk Predictor]
-    ML --> Gold[Gold Star Schema: Embedded Predictions]
-    Gold --> Tableau[Tableau Public Dashboard]
+flowchart LR
+    subgraph Ingestion [1. Ingestion]
+        S3[(AWS S3 Inbound <br> Raw Transactions)]
+    end
     
-    style S3 fill:#569A31,stroke:#333,stroke-width:2pt,color:#fff
-    style Bronze fill:#FF3621,stroke:#333,stroke-width:2pt,color:#fff
-    style Silver fill:#FF3621,stroke:#333,stroke-width:2pt,color:#fff
-    style ML fill:#FF3621,stroke:#333,stroke-width:2pt,color:#fff
-    style Gold fill:#0091D5,stroke:#333,stroke-width:2pt,color:#fff
-    style Tableau fill:#E97627,stroke:#333,stroke-width:2pt,color:#fff
+    subgraph Engine [2. Databricks Processing Engine]
+        Bronze[Bronze Delta Lake <br> Raw Ingest] --> Silver[Silver Delta Lake <br> Clean & Feature Eng]
+        Silver --> ML[LightGBM Model <br> Delay Risk Predictor]
+        ML --> Gold[Gold Star Schema <br> Embedded Predictions]
+    end
+    
+    subgraph Reporting [3. Analytics & Presentation]
+        Tableau[Tableau Public <br> Interactive Dashboard]
+    end
+    
+    S3 --> Bronze
+    Gold --> Tableau
+    
+    style Ingestion fill:#F8FAFC,stroke:#CBD5E1,stroke-width:1px,stroke-dasharray: 5 5
+    style Engine fill:#F8FAFC,stroke:#CBD5E1,stroke-width:1px,stroke-dasharray: 5 5
+    style Reporting fill:#F8FAFC,stroke:#CBD5E1,stroke-width:1px,stroke-dasharray: 5 5
+    
+    style S3 fill:#FF9900,stroke:#232F3E,stroke-width:1px,color:#fff
+    style Bronze fill:#FF3621,stroke:#1A0805,stroke-width:1px,color:#fff
+    style Silver fill:#FF3621,stroke:#1A0805,stroke-width:1px,color:#fff
+    style ML fill:#6366F1,stroke:#1E1B4B,stroke-width:1px,color:#fff
+    style Gold fill:#0091D5,stroke:#0A2540,stroke-width:1px,color:#fff
+    style Tableau fill:#E97627,stroke:#2D1505,stroke-width:1px,color:#fff
 ```
 
 *   **Ingestion (Bronze Layer):** Raw CSV transaction records are uploaded to **AWS S3** and loaded directly into Databricks Delta tables.
@@ -82,9 +97,47 @@ To optimize database performance and power our Tableau dashboard, the Databricks
 ```mermaid
 erDiagram
     dim_customers ||--o{ fact_sales : "customer_id"
-    dim_date ||--o{ fact_sales : "order_date_key (date_key)"
-    dim_date ||--o{ fact_sales : "shipping_date_key (date_key)"
+    dim_date ||--o{ fact_sales : "order_date_key"
+    dim_date ||--o{ fact_sales : "shipping_date_key"
     dim_products ||--o{ fact_sales : "product_card_id"
+
+    fact_sales {
+        int order_item_id PK
+        int order_id
+        int customer_id FK
+        int product_card_id FK
+        date order_date_key FK
+        date shipping_date_key FK
+        double sales "Revenue"
+        double benefit_per_order "Profit"
+        boolean late_delivery_risk "Actual Late"
+        boolean predicted_late_delivery_risk "ML Prediction"
+        float predicted_late_delivery_probability "ML Probability"
+    }
+
+    dim_customers {
+        int customer_id PK
+        string customer_name
+        string customer_segment
+        string customer_city
+        double latitude
+        double longitude
+    }
+
+    dim_products {
+        int product_card_id PK
+        string product_name
+        decimal product_price
+        string category_name
+    }
+
+    dim_date {
+        date date_key PK
+        int year
+        int month
+        string month_name
+        boolean is_weekend
+    }
 ```
 
 *   **`fact_sales` (180,519 rows × 22 columns):** Contains order details, sales revenue, net profit, shipping schedules, and the embedded ML classifications (`predicted_late_delivery_risk`, `predicted_late_delivery_probability`).
