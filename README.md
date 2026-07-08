@@ -25,6 +25,10 @@ I built an automated data pipeline using **AWS S3** (cloud storage) and **Databr
 *   📊 **[View Interactive Dashboard on Tableau Public](https://public.tableau.com/views/Dashboard_17831794486840/Dashboard1?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)**
 *   🎨 **[View Presentation Slide Deck on Canva](https://canva.link/0nyg28pls1btki7)**
 *   💾 **[DataCo Supply Chain Dataset (Kaggle)](https://www.kaggle.com/datasets/shashwatwork/dataco-smart-supply-chain-dataset)**
+*   🔍 **Interactive Data Profiling Reports (Databricks Profilers):**
+    *   📥 **[Bronze Layer Data Report (HTML)](./Bronze%20Layer%20Data%20Report.html)** — Raw data schemas, initial column shapes, and null metrics.
+    *   🧹 **[Silver Layer Data Report (HTML)](./Silver%20Layer%20Data%20Report.html)** — Cleaned text distributions, casing checks, and padded records.
+    *   🏆 **[Gold Layer Data Report (HTML)](./Gold%20Layer%20Data%20Report.html)** — Star schema dimension profiles, metrics, and correlation audits.
 
 > [!IMPORTANT]
 > ### ⚡ **Quick Project-at-a-Glance (TL;DR)**
@@ -76,18 +80,23 @@ flowchart LR
     style Tableau fill:#E97627,stroke:#2D1505,stroke-width:1px,color:#fff
 ```
 
-*   **Ingestion (Bronze Layer):** Raw CSV transaction records are uploaded to **AWS S3** and loaded directly into Databricks Delta tables.
-*   **Cleaning & Feature Engineering (Silver Layer):** Resolved **11 data quality issues** (such as removing empty columns, renaming fields, and dropping data leakage variables). Created 28 pre-transit features (such as order hour, weekday, and category risk maps).
+*   **Ingestion (Bronze Layer):** Raw CSV transaction records are uploaded to **AWS S3** and loaded directly into Databricks Delta tables. (See detailed **[Bronze Layer Data Report](./Bronze%20Layer%20Data%20Report.html)**).
+*   **Cleaning & Feature Engineering (Silver Layer):** Cleaned data quality issues (dropping redundant fields, normalising casings, and standardizing SQL nulls) and generated pre-transit features for ML. (See detailed **[Silver Layer Data Report](./Silver%20Layer%20Data%20Report.html)**).
 *   **Predictive ML Modeling:** Trained a **LightGBM** binary classifier (an ML model that predicts Yes/No outcomes) using *only* pre-transit features (features known before the package is shipped). This allows the model to predict delay risks for new, undelivered orders. The model achieved **70.0% accuracy** and a balanced **0.696 F1-score**.
-*   **Dimensional Modeling (Gold Layer):** Created a **Star Schema** (Fact and Dimension tables) in Databricks. I embedded the ML model's delay risk probabilities directly into the sales fact table, making it ready for Tableau reports.
+*   **Dimensional Modeling (Gold Layer):** Created a **Star Schema** (Fact and Dimension tables) in Databricks, embedding the ML model's delay risk probabilities directly into the sales fact table for Tableau. (See detailed **[Gold Layer Data Report](./Gold%20Layer%20Data%20Report.html)**).
 *   **Business Intelligence (Tableau):** Designed an Obsidian-Slate dark mode dashboard with 6 interactive quadrants, cross-filtering, and dynamic chart swaps.
 
 #### 🛠️ Data Quality & Cleaning Actions (Showcasing Data Rigor)
-Data cleaning represents 70% of an analyst's daily work. In this project, I resolved **11 critical data quality issues** to ensure our metrics are 100% accurate:
-1.  **Fixed Sales Inflation Bug (Row Duplication):** In the raw ingestion phase, overlapping tables caused rows to duplicate by **~3.6x**. This would have falsely inflated total revenue metrics by millions of dollars. I fixed this duplication to show the true sales total (**180,519 rows**).
-2.  **Optimized Database Memory:** Dropped `order_zipcode` (which had 86.2% empty values) and timestamp fields that had no variance (`ingested_at`, `cleaned_at`).
-3.  **Prevented Target Leakage:** Excluded future columns (like actual shipping transit days) from the ML model training. This ensures the model does not "cheat" using future data during training, allowing it to predict delays for newly placed orders.
-4.  **Standardized Demographics:** Standardized Spanish-language country labels (e.g. `EE. UU.` to USA) and filled in missing values in customer name fields.
+Data cleaning represents 70% of a real-world analyst's daily workflow. In this project, I resolved critical data quality issues in the Databricks Silver layer to protect downstream metric integrity:
+1.  **Granular Transaction Deduplication:** Deduplicated all records on the transaction primary key (`order_item_id`) to ensure data integrity and exact record counts (**180,519 rows**).
+2.  **Column Sanitization & Snake_Casing:** Converted all raw, messy column names into clean, lower_snake_case. Dropped constant and empty columns to optimize storage.
+3.  **Casing Normalization:** Applied Title Case (`initcap`) to names, cities, and products, and UPPERCASE (`upper`) to states (`PR`, `CA`), order status, and payment types.
+4.  **Null Standardisation & Trimming:** Converted all empty string placeholders (`""`) to true SQL `NULL` values and trimmed whitespace. Imputed missing customer last names with `"Unknown"` to avoid broken name strings in Tableau.
+5.  **Standardized Demographics:** Cleaned customer country fields (standardizing Spanish-language representations like `ee. uu.` to `EE. UU.`).
+6.  **Geographic ZIP Code Padding:** Padded `customer_zipcode` to 5 digits unconditionally, and padded `order_zipcode` only when shipping to the United States (`order_country == 'Estados Unidos'`), preserving international zip code lengths.
+7.  **Precision Datatype Casting:** Cast all sales, revenue, discount, and profit fields to precise `DecimalType(10, 2)` to eliminate floating-point rounding errors during Tableau aggregates.
+8.  **Logical Date Validations:** Enforced a chronology check (`shipping_date >= order_date`) to ensure carrier timelines make logical sense.
+9.  **Delta Lake Physical Optimization:** Ran physical storage compaction (combining small files) and Z-Order indexing on `order_date` to optimize partition files for fast analytical querying.
 
 ---
 
