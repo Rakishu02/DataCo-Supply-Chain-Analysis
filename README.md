@@ -26,9 +26,9 @@ I built an automated data pipeline using **AWS S3** (cloud storage) and **Databr
 *   🎨 **[View Presentation Slide Deck on Canva](https://canva.link/0nyg28pls1btki7)**
 *   💾 **[DataCo Supply Chain Dataset (Kaggle)](https://www.kaggle.com/datasets/shashwatwork/dataco-smart-supply-chain-for-big-data-analysis)**
 *   🔍 **Interactive Data Profiling Reports (Databricks Profilers):**
-    *   📥 **[Bronze Layer Data Report (HTML)](./Bronze%20Layer%20Data%20Report.html)** — Raw data schemas, initial column shapes, and null metrics.
-    *   🧹 **[Silver Layer Data Report (HTML)](./Silver%20Layer%20Data%20Report.html)** — Cleaned text distributions, casing checks, and padded records.
-    *   🏆 **[Gold Layer Data Report (HTML)](./Gold%20Layer%20Data%20Report.html)** — Star schema dimension profiles, metrics, and correlation audits.
+    *   📥 **[Bronze Layer Data Report (HTML)](https://rakishu02.github.io/DataCo-Supply-Chain-Analysis/Bronze%20Layer%20Data%20Report.html)** — Raw data schemas, initial column shapes, and null metrics.
+    *   🧹 **[Silver Layer Data Report (HTML)](https://rakishu02.github.io/DataCo-Supply-Chain-Analysis/Silver%20Layer%20Data%20Report.html)** — Cleaned text distributions, casing checks, and padded records.
+    *   🏆 **[Gold Layer Data Report (HTML)](https://rakishu02.github.io/DataCo-Supply-Chain-Analysis/Gold%20Layer%20Data%20Report.html)** — Star schema dimension profiles, metrics, and correlation audits.
 
 > [!IMPORTANT]
 > ### ⚡ **Quick Project-at-a-Glance (TL;DR)**
@@ -80,10 +80,10 @@ flowchart LR
     style Tableau fill:#E97627,stroke:#2D1505,stroke-width:1px,color:#fff
 ```
 
-*   **Ingestion (Bronze Layer):** Raw CSV transaction records are uploaded to **AWS S3** and loaded directly into Databricks Delta tables. (See detailed **[Bronze Layer Data Report](./Bronze%20Layer%20Data%20Report.html)**).
-*   **Cleaning & Feature Engineering (Silver Layer):** Cleaned data quality issues (dropping redundant fields, normalising casings, and standardizing SQL nulls) and generated pre-transit features for ML. (See detailed **[Silver Layer Data Report](./Silver%20Layer%20Data%20Report.html)**).
+*   **Ingestion (Bronze Layer):** Raw CSV transaction records are uploaded to **AWS S3** and loaded directly into Databricks Delta tables. (See detailed **[Bronze Layer Data Report](https://rakishu02.github.io/DataCo-Supply-Chain-Analysis/Bronze%20Layer%20Data%20Report.html)**).
+*   **Cleaning & Feature Engineering (Silver Layer):** Cleaned data quality issues (dropping redundant fields, normalising casings, and standardizing SQL nulls) and generated pre-transit features for ML. (See detailed **[Silver Layer Data Report](https://rakishu02.github.io/DataCo-Supply-Chain-Analysis/Silver%20Layer%20Data%20Report.html)**).
 *   **Predictive ML Modeling:** Trained a **LightGBM** binary classifier (an ML model that predicts Yes/No outcomes) using *only* pre-transit features (features known before the package is shipped). This allows the model to predict delay risks for new, undelivered orders. The model achieved **70.0% accuracy** and a balanced **0.696 F1-score**.
-*   **Dimensional Modeling (Gold Layer):** Created a **Star Schema** (Fact and Dimension tables) in Databricks, embedding the ML model's delay risk probabilities directly into the sales fact table for Tableau. (See detailed **[Gold Layer Data Report](./Gold%20Layer%20Data%20Report.html)**).
+*   **Dimensional Modeling (Gold Layer):** Created a **Star Schema** (Fact and Dimension tables) in Databricks, embedding the ML model's delay risk probabilities directly into the sales fact table for Tableau. (See detailed **[Gold Layer Data Report](https://rakishu02.github.io/DataCo-Supply-Chain-Analysis/Gold%20Layer%20Data%20Report.html)**).
 *   **Business Intelligence (Tableau):** Designed an Obsidian-Slate dark mode dashboard with 6 interactive quadrants, cross-filtering, and dynamic chart swaps.
 
 #### 🛠️ Data Quality & Cleaning Actions (Showcasing Data Rigor)
