@@ -39,10 +39,22 @@ I built an automated data pipeline using **AWS S3** (cloud storage) and **Databr
 ---
 
 ### 2. Business Questions Answered
-*   **Which shipping classes (Standard, First Class, etc.) cause the most delivery delays?**
+
+*   **Which shipping classes cause the most delivery delays?**
+    *   **First Class shipping** is the worst operational failure, showing a staggering **95.32% actual delay rate**. This means DataCo is paying premium carrier rates for a service that almost always fails. **Standard Class** also has a high delay rate of **56.29%** overall.
 *   **How much money is lost on unprofitable transactions, and which product categories are the main drivers?**
+    *   DataCo lost **$3.88M** directly to unprofitable orders, representing **18.71% of all transactions** operating at a loss. The primary drivers of this profit leakage are **Fishing** (cumulative loss of **$728.6K**) and **Cleats** (cumulative loss of **$452.6K**).
 *   **Which major US cities represent the highest sales revenue at risk from delays?**
+    *   Excluding the local home hub of Caguas, PR, the highest sales revenue at risk is concentrated in high-volume US cities:
+        1.  **Chicago, IL:** `$797.6K` sales at risk (**56.58%** delay rate)
+        2.  **Los Angeles, CA:** `$697.9K` sales at risk (**54.38%** delay rate)
+        3.  **Brooklyn, NY:** `$676.4K` sales at risk (**53.11%** delay rate)
 *   **At what exact shipping day threshold does a carrier breach its promised delivery schedule?**
+    *   Delays follow a binary "SLA Cliff" where delay rates jump instantly from **0% to 95%+** once a threshold is crossed:
+        *   **Same Day:** Promised on Day 0. Breaches on **Day 1+** (delay rate jumps to **95.64%**).
+        *   **First Class:** Promised on Day 1. Breaches on **Day 2+** (delay rate jumps to **95.32%**).
+        *   **Second Class:** Promised on Day 2. Breaches on **Day 3+** (delay rate jumps to **95.0%–96.9%**).
+        *   **Standard Class:** Promised on Day 4. Breaches on **Day 5+** (delay rate jumps to **95.6%–95.8%**).
 
 ---
 
